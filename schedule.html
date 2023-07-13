@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>カレンダー日付選択</title>
+  <style>
+    .calendar {
+      display: inline-block;
+      border: 1px solid #ccc;
+      font-family: Arial, sans-serif;
+    }
+
+    .calendar-header {
+      background-color: #f0f0f0;
+      text-align: center;
+      padding: 5px;
+    }
+
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      background-color: #fff;
+    }
+
+    .calendar-day {
+      text-align: center;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .calendar-day:hover {
+      background-color: #f0f0f0;
+    }
+
+    .selected-day {
+      background-color: #ffcc80;
+    }
+  </style>
+</head>
+<body>
+  <h1>カレンダー日付選択</h1>
+
+  <div class="calendar" id="calendar">
+    <div class="calendar-header">
+      <button onclick="previousMonth()">&lt;</button>
+      <span id="month-year"></span>
+      <button onclick="nextMonth()">&gt;</button>
+    </div>
+    <div class="calendar-days" id="calendar-days"></div>
+  </div>
+
+  <label for="selectedDate">日付を選択してください:</label>
+  <input type="text" id="selectedDate" readonly>
+
+  <script>
+    var currentDate = new Date();
+    var selectedDate = null;
+
+    function generateCalendar() {
+      var calendarDays = document.getElementById("calendar-days");
+      calendarDays.innerHTML = "";
+
+      var monthYear = document.getElementById("month-year");
+      monthYear.innerText = formatDate(currentDate, "MMMM yyyy");
+
+      var firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      var lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+
+      // Fill in empty days for the first week
+      for (var i = 0; i < firstDay.getDay(); i++) {
+        var emptyDay = document.createElement("div");
+        emptyDay.classList.add("calendar-day");
+        emptyDay.innerText = "";
+        calendarDays.appendChild(emptyDay);
+      }
+
+      // Generate calendar days
+      for (var day = 1; day <= lastDay.getDate(); day++) {
+        var calendarDay = document.createElement("div");
+        calendarDay.classList.add("calendar-day");
+        calendarDay.innerText = day;
+
+        if (selectedDate && isSameDate(currentDate, selectedDate) && day === selectedDate.getDate()) {
+          calendarDay.classList.add("selected-day");
+        }
+
+        calendarDay.addEventListener("click", function(e) {
+          var day = e.target.innerText;
+          selectedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+
+          var selectedDateInput = document.getElementById("selectedDate");
+          selectedDateInput.value = formatDate(selectedDate, "yyyy-MM-dd");
+
+          generateCalendar();
+        });
+
+        calendarDays.appendChild(calendarDay);
+      }
+    }
+
+    function previousMonth() {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      generateCalendar();
+    }
+
+    function nextMonth() {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      generateCalendar();
+    }
+
+    function formatDate(date, format) {
+      var options = {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+      };
+
+      return date.toLocaleDateString("en-US", options);
+    }
+
+    function isSameDate(date1, date2) {
+      return date1.getFullYear() === date2.getFullYear()
+        && date1.getMonth() === date2.getMonth()
+        && date1.getDate() === date2.getDate();
+    }
+
+    generateCalendar();
+  </script>
+</body>
+</html>
