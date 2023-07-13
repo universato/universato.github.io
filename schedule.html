@@ -86,10 +86,10 @@
           selectedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
 
           const selectedDateInput = document.getElementById("selectedDate");
-          selectedDateInput.value = formatDate(selectedDate, "YYYY年M月D日(ddd)");
+          selectedDateInput.value = formatDate(selectedDate, "yyyy年M月d日(ddd)");
 
           const textArea = document.getElementById("textArea");
-          const selectedDateString = formatDate(selectedDate, "YYYY年M月D日(ddd)");
+          const selectedDateString = formatDate(selectedDate, "yyyy年M月d日(ddd)");
           textArea.value += selectedDateString + "\n";
 
           generateCalendar();
@@ -117,7 +117,9 @@
         weekday: "short"
       };
 
-      return date.toLocaleDateString("ja-JP", options).replace(/(\d+)\/(\d+)\/(\d+)\((.)\)/, "$1年$2月$3日($4)");
+      return date.toLocaleDateString("ja-JP", options).replace(/(\d+)\/(\d+)\/(\d+)\((.)\)/, function(_, year, month, day, weekday) {
+        return format.replace("yyyy", year).replace("M", month).replace("d", day).replace("ddd", weekday);
+      });
     }
 
     function isSameDate(date1, date2) {
