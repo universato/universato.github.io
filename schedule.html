@@ -64,6 +64,12 @@
   <label for="selectedDate">日付を選択してください:</label>
   <input type="text" id="selectedDate" readonly>
 
+  <br>
+
+  <label for="textArea">テキストエリア:</label>
+  <br>
+  <textarea id="textArea" rows="4" cols="50"></textarea>
+
   <script>
     var currentDate = new Date();
     var selectedDate = null;
@@ -124,7 +130,11 @@
           selectedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
 
           var selectedDateInput = document.getElementById("selectedDate");
-          selectedDateInput.value = formatDate(selectedDate, "yyyy-MM-dd");
+          selectedDateInput.value = formatDate(selectedDate, "YYYY年M月D日(ddd)");
+
+          var textArea = document.getElementById("textArea");
+          var selectedDateString = formatDate(selectedDate, "YYYY年M月D日(ddd)");
+          textArea.value += selectedDateString + "\n";
 
           generateCalendar();
         });
@@ -146,11 +156,12 @@
     function formatDate(date, format) {
       var options = {
         year: "numeric",
-        month: "short",
-        day: "numeric"
+        month: "numeric",
+        day: "numeric",
+        weekday: "short"
       };
 
-      return date.toLocaleDateString("en-US", options);
+      return date.toLocaleDateString("ja-JP", options).replace(/(\d+)\/(\d+)\/(\d+)\((.)\)/, "$1年$2月$3日($4)");
     }
 
     function isSameDate(date1, date2) {
