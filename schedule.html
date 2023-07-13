@@ -6,6 +6,7 @@
 </head>
 <body>
   <h4>カレンダー日付選択</h4>
+  <p>本日の日付: <span id="today"></span></p>
 
   <div class="calendar" id="calendar">
     <div class="calendar-header">
@@ -31,7 +32,10 @@
       calendarDays.innerHTML = "";
 
       var monthYear = document.getElementById("month-year");
-      monthYear.innerText = formatDate(currentDate, "MMMM yyyy");
+      monthYear.innerText = formatDate(currentDate, "yyyy年M月");
+
+      var todayDiv = document.getElementById("today");
+      todayDiv.innerText = formatDate(new Date(), "yyyy年M月d日");
 
       var today = new Date();
 
