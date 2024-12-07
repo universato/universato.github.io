@@ -12,18 +12,16 @@ textarea, input {
 
 textarea {
   width: 100%;
-  /* margin-top: 0px;
-  margin-bottom: 0px; */
 }
 
 input {
   flex: 1; /* 入力フィールドを均等に広げる */
-  margin-right: 5px;
+  margin-right: 4px;
+  margin-left: 4px;
 }
 
 label {
   font-weight: bold;
-  margin-right: 0px;
 }
 
 label.inline {
@@ -36,21 +34,24 @@ label.inline {
 .replace-pair {
   display: flex; /* 横並びに配置 */
   align-items: center; /* 縦方向で中央揃え */
-  margin-bottom: 10px;
+  margin-bottom: 4px;
 }
 
 button {
   font-size: 16px;
   padding: 10px;
-  margin: 5px 0;
-  cursor: pointer;
-}
-
-h1, h2 {
-  margin-bottom: 20px;
+  margin: 4px 0;
 }
 
 .file-upload-container {
-  text-align: right; /* 子要素を右端に配置 */
-  margin-bottom: 10px; /* 下に余白 */
+  text-align: right; /* 右端に配置 */
+}
+
+.statics {
+  margin-left: 40px;
+}
+
+.note {
+  margin: 10px;
+  font-size: 12px;
 }
