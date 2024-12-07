@@ -49,3 +49,8 @@ button {
 h1, h2 {
   margin-bottom: 20px;
 }
+
+.file-upload-container {
+  text-align: right; /* 子要素を右端に配置 */
+  margin-bottom: 10px; /* 下に余白 */
+}
