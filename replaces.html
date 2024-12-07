@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniReplaces 置換ツール</title>
+    <link rel="stylesheet" href="replaces.css">
+</head>
+<body>
+    <h1>UniReplaces 置換ツール</h1>
+    <div id="replaceContainer">
+        <div class="replace-pair">
+            <label></label><input type="text" class="searchText" value="\n">
+            →
+            <label></label><input type="text" class="replaceText" value="">
+            <label class="inline"><input type="checkbox" class="regexToggle" checked>正規表現を使用</label>
+            <label class="inline"><input type="checkbox" class="replaceToggle" checked>置換実行</label>
+        </div>
+        <div class="replace-pair">
+            <label></label><input type="text" class="searchText" value="\?">
+            →
+            <label></label><input type="text" class="replaceText" value="?\n">
+            <label class="inline"><input type="checkbox" class="regexToggle" checked>正規表現を使用</label>
+            <label class="inline"><input type="checkbox" class="replaceToggle" checked>置換実行</label>
+        </div>
+        <div class="replace-pair">
+            <label></label><input type="text" class="searchText" value="？">
+            →
+            <label></label><input type="text" class="replaceText" value="？\n">
+            <label class="inline"><input type="checkbox" class="regexToggle" checked>正規表現を使用</label>
+            <label class="inline"><input type="checkbox" class="replaceToggle" checked>置換実行</label>
+        </div>
+        <div class="replace-pair">
+            <label></label><input type="text" class="searchText" value="(\d+)\n">
+            →
+            <label></label><input type="text" class="replaceText" value="$1,">
+            <label class="inline"><input type="checkbox" class="regexToggle" checked>正規表現を使用</label>
+            <label class="inline"><input type="checkbox" class="replaceToggle" checked>置換実行</label>
+        </div>
+    </div>
+    <button id="addPair">+</button>
+    <button id="removePair">-</button>
+
+    <div>
+      <textarea id="originalText" rows="5" placeholder=""></textarea>
+      ↓
+      <textarea id="resultText" rows="5" readonly placeholder=""></textarea>
+      <script src="replaces.js"></script>
+    </div>
+
+    <a href="index.html">何も無いindex</a>
+</body>
+</html>
