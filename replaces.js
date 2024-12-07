@@ -57,6 +57,41 @@ window.addEventListener("DOMContentLoaded", () => {
       originalTextElement.value = savedText;
   }
 
+  const replaces = [
+    ["\\n", "", true, true],
+    ["\\?", "?\\n", true, true],
+    ["？", "？\\n", true, true],
+    ["(\\d+)\\n", "$1,", true, true],
+    ["</?div>", "<br>", true, true],
+    ["(<br>)+", "<br>", true, true],
+    ["(\\d+) +年", "$1年", true, true],
+    ["(\\d{1,2}) +月", "$1月", true, true],
+    ["(\\d{1,2}) +日", "$1日", true, true],
+    ["(\\d{1,3}) +歳", "$1歳", true, true],
+    ["(\\d{1,3}) +才", "$1才", true, true],
+    ["（", "(", false, true],
+    ["）", ")", false, true],
+    ["You tube", "YouTube", false, true],
+    ["Youtube", "YouTube", false, true],
+  ];
+
+  replaces.forEach((replace) => {
+    const [beforeText, afterText, isCheckedRegex] = replace;
+
+    const pair = document.createElement("div");
+    pair.classList.add("replace-pair");
+
+    pair.innerHTML = `
+      <label></label><input type="text" class="searchText" value="${beforeText}">
+      →
+      <label></label><input type="text" class="replaceText" value="${afterText}">
+      <label class="inline"><input type="checkbox" class="regexToggle" ${isCheckedRegex ? "checked" : ""}>正規表現を使用</label>
+      <label class="inline"><input type="checkbox" class="replaceToggle" checked>置換実行</label>`;
+    replaceContainer.appendChild(pair);
+  })
+
+  document.body.classList.add("loaded");
+
   performReplace()
 });
 
@@ -66,9 +101,9 @@ addPairButton.addEventListener("click", () => {
     pair.classList.add("replace-pair");
 
     pair.innerHTML = `
-        <label></label><input type="text" class="searchText" placeholder="">
+        <label></label><input type="text" class="searchText" value="">
         →
-        <label></label><input type="text" class="replaceText" placeholder="">
+        <label></label><input type="text" class="replaceText" value="">
         <label class="inline"><input type="checkbox" class="regexToggle">正規表現を使用</label>
         <label class="inline"><input type="checkbox" class="replaceToggle" checked>置換実行</label>
     `;

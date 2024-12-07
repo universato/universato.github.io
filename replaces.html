@@ -9,49 +9,8 @@
 <body>
     <h1>UniSerialReplaces 連続置換機ツール</h1>
     <div id="replaceContainer">
-        <div class="replace-pair">
-            <label></label><input type="text" class="searchText" value="\n">
-            →
-            <label></label><input type="text" class="replaceText" value="">
-            <label class="inline"><input type="checkbox" class="regexToggle" checked>正規表現を使用</label>
-            <label class="inline"><input type="checkbox" class="replaceToggle" checked>置換実行</label>
-        </div>
-        <div class="replace-pair">
-            <label></label><input type="text" class="searchText" value="\?">
-            →
-            <label></label><input type="text" class="replaceText" value="?\n">
-            <label class="inline"><input type="checkbox" class="regexToggle" checked>正規表現を使用</label>
-            <label class="inline"><input type="checkbox" class="replaceToggle" checked>置換実行</label>
-        </div>
-        <div class="replace-pair">
-            <label></label><input type="text" class="searchText" value="？">
-            →
-            <label></label><input type="text" class="replaceText" value="？\n">
-            <label class="inline"><input type="checkbox" class="regexToggle" checked>正規表現を使用</label>
-            <label class="inline"><input type="checkbox" class="replaceToggle" checked>置換実行</label>
-        </div>
-        <div class="replace-pair">
-            <label></label><input type="text" class="searchText" value="(\d+)\n">
-            →
-            <label></label><input type="text" class="replaceText" value="$1,">
-            <label class="inline"><input type="checkbox" class="regexToggle" checked>正規表現を使用</label>
-            <label class="inline"><input type="checkbox" class="replaceToggle" checked>置換実行</label>
-        </div>
-        <div class="replace-pair">
-            <label></label><input type="text" class="searchText" value="</?div>">
-            →
-            <label></label><input type="text" class="replaceText" value="<br>">
-            <label class="inline"><input type="checkbox" class="regexToggle" checked>正規表現を使用</label>
-            <label class="inline"><input type="checkbox" class="replaceToggle" checked>置換実行</label>
-        </div>
-        <div class="replace-pair">
-            <label></label><input type="text" class="searchText" value="(<br>)+">
-            →
-            <label></label><input type="text" class="replaceText" value="<br>">
-            <label class="inline"><input type="checkbox" class="regexToggle" checked>正規表現を使用</label>
-            <label class="inline"><input type="checkbox" class="replaceToggle" checked>置換実行</label>
-        </div>
     </div>
+
     <button id="addPair">+</button>
     <button id="removePair">-</button>
 
