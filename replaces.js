@@ -134,7 +134,7 @@ function performReplace() {
 
 // ファイル選択時の処理
 fileInput.addEventListener("change", (event) => {
-  const file = event.target.files[0]; // 選択されたファイル
+  const file = event.target.files[0];
 
   if (!file) {
     console.log("[ALERT] File not Found");
@@ -144,7 +144,7 @@ fileInput.addEventListener("change", (event) => {
   const reader = new FileReader();
   // ファイル読み込み完了時の処理
   reader.onload = (e) => {
-      originalTextElement.value = e.target.result; // ファイル内容を反映
+      originalTextElement.value = e.target.result;
       performReplace();
   };
   reader.readAsText(file); // ファイルをテキストとして読み込む
