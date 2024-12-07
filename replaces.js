@@ -41,6 +41,15 @@ const countRightParenthesisBefore = document.getElementById("countRightParenthes
 const countRightParenthesisAfter = document.getElementById("countRightParenthesisAfter");
 const countRightParenthesisDiff = document.getElementById("countRightParenthesisDiff");
 
+const countStartDivTagBefore = document.getElementById("countStartDivTagBefore");
+const countStartDivTagAfter = document.getElementById("countStartDivTagAfter");
+const countStartDivTagDiff = document.getElementById("countStartDivTagDiff");
+
+const countEndDivTagBefore = document.getElementById("countEndDivTagBefore");
+const countEndDivTagAfter = document.getElementById("countEndDivTagAfter");
+const countEndDivTagDiff = document.getElementById("countEndDivTagDiff");
+
+
 // ページ読み込み時に保存されたデータを取得して表示
 window.addEventListener("DOMContentLoaded", () => {
   const savedText = localStorage.getItem("originalText");
@@ -223,6 +232,20 @@ function updateCounts() {
   countRightParenthesisBefore.textContent = beforeRightParenthesisCount;
   countRightParenthesisAfter.textContent = afterRightParenthesisCount;
   countRightParenthesisDiff.textContent = afterRightParenthesisCount - beforeRightParenthesisCount;
+
+  // <div>のカウント
+  const beforeStartDivTagCount = countOccurrences(beforeText, "<div>");
+  const afterStartDivTagCount = countOccurrences(afterText, "<div>");
+  countStartDivTagBefore.textContent = beforeStartDivTagCount;
+  countStartDivTagAfter.textContent = afterStartDivTagCount;
+  countStartDivTagDiff.textContent = afterStartDivTagCount - beforeStartDivTagCount;
+
+  // </div>のカウント
+  const beforeEndDivTagCount = countOccurrences(beforeText, "</div>");
+  const afterEndDivTagCount = countOccurrences(afterText, "</div>");
+  countEndDivTagBefore.textContent = beforeEndDivTagCount;
+  countEndDivTagAfter.textContent = afterEndDivTagCount;
+  countEndDivTagDiff.textContent = afterEndDivTagCount - beforeEndDivTagCount;
 }
 
 // 入力が変わるたびに置換を実行
