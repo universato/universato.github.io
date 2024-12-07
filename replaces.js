@@ -76,7 +76,7 @@ addPairButton.addEventListener("click", () => {
     replaceContainer.appendChild(pair);
 });
 
-// 動的に検索・置換ペアを削除（最低1ペアは残す）
+// 動的に検索・置換ペアを削除(最低1ペアは残す)
 removePairButton.addEventListener("click", () => {
     const pairs = document.querySelectorAll(".replace-pair");
     if (pairs.length > 1) {
@@ -105,7 +105,7 @@ function performReplace() {
           return; // スキップ
         }
 
-        // 改行文字（\n）の実際の改行への変換
+        // 改行文字(\n)の実際の改行への変換
         replaceText = replaceText.replace(/\\n/g, "\n");
 
         try {
@@ -219,14 +219,14 @@ function updateCounts() {
   countFullwidthRightParenthesisAfter.textContent = afterFullwidthRightParenthesisCount;
   countFullwidthRightParenthesisDiff.textContent = afterFullwidthRightParenthesisCount - beforeFullwidthRightParenthesisCount;
 
-  // 半角丸括弧 `（` のカウント
+  // 半角丸括弧 `(` のカウント
   const beforeLeftParenthesisCount = countOccurrences(beforeText, "(");
   const afterLeftParenthesisCount = countOccurrences(afterText, "(");
   countLeftParenthesisBefore.textContent = beforeLeftParenthesisCount;
   countLeftParenthesisAfter.textContent = afterLeftParenthesisCount;
   countLeftParenthesisDiff.textContent = afterLeftParenthesisCount - beforeLeftParenthesisCount;
 
-  // 半角丸括弧 `）` のカウント
+  // 半角丸括弧 `)` のカウント
   const beforeRightParenthesisCount = countOccurrences(beforeText, ")");
   const afterRightParenthesisCount = countOccurrences(afterText, ")");
   countRightParenthesisBefore.textContent = beforeRightParenthesisCount;
