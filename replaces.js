@@ -4,6 +4,43 @@ const removePairButton = document.getElementById("removePair");
 const originalTextElement = document.getElementById("originalText");
 const resultTextElement = document.getElementById("resultText");
 
+// カウント結果を表示する要素
+const countCharacterBefore = document.getElementById("countCharacterBefore");
+const countCharacterAfter = document.getElementById("countCharacterAfter");
+const countCharacterDiff = document.getElementById("countCharacterDiff");
+
+const countQuestionBefore = document.getElementById("countQuestionBefore");
+const countQuestionAfter = document.getElementById("countQuestionAfter");
+const countQuestionDiff = document.getElementById("countQuestionDiff");
+
+const countFullWidthQuestionBefore = document.getElementById("countFullWidthQuestionBefore");
+const countFullWidthQuestionAfter = document.getElementById("countFullWidthQuestionAfter");
+const countFullWidthQuestionDiff = document.getElementById("countFullWidthQuestionDiff");
+
+const countNewLineBefore = document.getElementById("countNewLineBefore");
+const countNewLineAfter = document.getElementById("countNewLineAfter");
+const countNewLineDiff = document.getElementById("countNewLineDiff");
+
+const countReturnBefore = document.getElementById("countReturnBefore");
+const countReturnAfter = document.getElementById("countReturnAfter");
+const countReturnDiff = document.getElementById("countReturnDiff");
+
+const countFullwidthLeftParenthesisBefore = document.getElementById("countFullwidthLeftParenthesisBefore");
+const countFullwidthLeftParenthesisAfter = document.getElementById("countFullwidthLeftParenthesisAfter");
+const countFullwidthLeftParenthesisDiff = document.getElementById("countFullwidthLeftParenthesisDiff");
+
+const countFullwidthRightParenthesisBefore = document.getElementById("countFullwidthRightParenthesisBefore");
+const countFullwidthRightParenthesisAfter = document.getElementById("countFullwidthRightParenthesisAfter");
+const countFullwidthRightParenthesisDiff = document.getElementById("countFullwidthRightParenthesisDiff");
+
+const countLeftParenthesisBefore = document.getElementById("countLeftParenthesisBefore");
+const countLeftParenthesisAfter = document.getElementById("countLeftParenthesisAfter");
+const countLeftParenthesisDiff = document.getElementById("countLeftParenthesisDiff");
+
+const countRightParenthesisBefore = document.getElementById("countRightParenthesisBefore");
+const countRightParenthesisAfter = document.getElementById("countRightParenthesisAfter");
+const countRightParenthesisDiff = document.getElementById("countRightParenthesisDiff");
+
 // ページ読み込み時に保存されたデータを取得して表示
 window.addEventListener("DOMContentLoaded", () => {
   const savedText = localStorage.getItem("originalText");
@@ -82,6 +119,92 @@ function performReplace() {
     });
 
     resultTextElement.value = result;
+
+    updateCounts()
+}
+
+/**
+ * 指定した文字の出現回数をカウントする関数
+ * @param {string} text - 対象の文字列
+ * @param {string} target - カウントする文字
+ * @returns {number} - 出現回数
+ */
+function countOccurrences(text, target) {
+  const regex = new RegExp(target.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g');
+  const matches = text.match(regex);
+  return matches ? matches.length : 0;
+}
+
+/**
+ * テキストエリアの内容をカウントして結果を更新する関数
+ */
+function updateCounts() {
+  // テキストエリアの内容
+  const beforeText = originalTextElement.value;
+  const afterText = resultTextElement.value;
+
+  // 全体の文字数カウント
+  const beforeCharacterCount = beforeText.length;
+  const afterCharacterCount = afterText.length;
+  countCharacterBefore.textContent = beforeCharacterCount;
+  countCharacterAfter.textContent = afterCharacterCount;
+  countCharacterDiff.textContent = afterCharacterCount - beforeCharacterCount;
+
+  // 半角クエスチョンマーク `?` のカウント
+  const beforeQuestionCount = countOccurrences(beforeText, "?");
+  const afterQuestionCount = countOccurrences(afterText, "?");
+  countQuestionBefore.textContent = beforeQuestionCount;
+  countQuestionAfter.textContent = afterQuestionCount;
+  countQuestionDiff.textContent = afterQuestionCount - beforeQuestionCount;
+
+  // 全角クエスチョンマーク `？` のカウント
+  const beforeFullWidthQuestionCount = countOccurrences(beforeText, "？");
+  const afterFullWidthQuestionCount = countOccurrences(afterText, "？");
+  countFullWidthQuestionBefore.textContent = beforeFullWidthQuestionCount;
+  countFullWidthQuestionAfter.textContent = afterFullWidthQuestionCount;
+  countFullWidthQuestionDiff.textContent = afterFullWidthQuestionCount - beforeFullWidthQuestionCount;
+
+  // 改行\nのカウント
+  const beforeNewLineCount = countOccurrences(beforeText, "\n");
+  const afterNewLineCount = countOccurrences(afterText, "\n");
+  countNewLineBefore.textContent = beforeNewLineCount;
+  countNewLineAfter.textContent = afterNewLineCount;
+  countNewLineDiff.textContent = afterNewLineCount - beforeNewLineCount;
+
+  // 改行\rのカウント
+  const beforeReturnCount = countOccurrences(beforeText, "\r");
+  const afterReturnCount = countOccurrences(afterText, "\r");
+  countReturnBefore.textContent = beforeReturnCount;
+  countReturnAfter.textContent = afterReturnCount;
+  countReturnDiff.textContent = afterReturnCount - beforeReturnCount;
+
+  // 全角丸括弧 `（` のカウント
+  const beforeFullwidthLeftParenthesisCount = countOccurrences(beforeText, "（");
+  const afterFullwidthLeftParenthesisCount = countOccurrences(afterText, "（");
+  countFullwidthLeftParenthesisBefore.textContent = beforeFullwidthLeftParenthesisCount;
+  countFullwidthLeftParenthesisAfter.textContent = afterFullwidthLeftParenthesisCount;
+  countFullwidthLeftParenthesisDiff.textContent = afterFullwidthLeftParenthesisCount - beforeFullwidthLeftParenthesisCount;
+
+  // 全角丸括弧 `）` のカウント
+  const beforeFullwidthRightParenthesisCount = countOccurrences(beforeText, "）");
+  const afterFullwidthRightParenthesisCount = countOccurrences(afterText, "）");
+  countFullwidthRightParenthesisBefore.textContent = beforeFullwidthRightParenthesisCount;
+  countFullwidthRightParenthesisAfter.textContent = afterFullwidthRightParenthesisCount;
+  countFullwidthRightParenthesisDiff.textContent = afterFullwidthRightParenthesisCount - beforeFullwidthRightParenthesisCount;
+
+  // 半角丸括弧 `（` のカウント
+  const beforeLeftParenthesisCount = countOccurrences(beforeText, "(");
+  const afterLeftParenthesisCount = countOccurrences(afterText, "(");
+  countLeftParenthesisBefore.textContent = beforeLeftParenthesisCount;
+  countLeftParenthesisAfter.textContent = afterLeftParenthesisCount;
+  countLeftParenthesisDiff.textContent = afterLeftParenthesisCount - beforeLeftParenthesisCount;
+
+  // 半角丸括弧 `）` のカウント
+  const beforeRightParenthesisCount = countOccurrences(beforeText, ")");
+  const afterRightParenthesisCount = countOccurrences(afterText, ")");
+  countRightParenthesisBefore.textContent = beforeRightParenthesisCount;
+  countRightParenthesisAfter.textContent = afterRightParenthesisCount;
+  countRightParenthesisDiff.textContent = afterRightParenthesisCount - beforeRightParenthesisCount;
 }
 
 // 入力が変わるたびに置換を実行

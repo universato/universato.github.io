@@ -4,3 +4,10 @@
 <a href="https://universato.github.io/replaces.html"> 置換 </a>
 
 ## Development
+
+Macのコンソールで開く方法
+
+```
+open index.html
+open replaces.html
+```
