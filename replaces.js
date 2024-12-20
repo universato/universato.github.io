@@ -4,51 +4,12 @@ const removePairButton = document.getElementById("removePair");
 const originalTextElement = document.getElementById("originalText");
 const resultTextElement = document.getElementById("resultText");
 
-// カウント結果を表示する要素
-const countCharacterBefore = document.getElementById("countCharacterBefore");
-const countCharacterAfter = document.getElementById("countCharacterAfter");
-const countCharacterDiff = document.getElementById("countCharacterDiff");
+const staticsElement = document.getElementById("statics");
 
-const countQuestionBefore = document.getElementById("countQuestionBefore");
-const countQuestionAfter = document.getElementById("countQuestionAfter");
-const countQuestionDiff = document.getElementById("countQuestionDiff");
-
-const countFullWidthQuestionBefore = document.getElementById("countFullWidthQuestionBefore");
-const countFullWidthQuestionAfter = document.getElementById("countFullWidthQuestionAfter");
-const countFullWidthQuestionDiff = document.getElementById("countFullWidthQuestionDiff");
-
-const countNewLineBefore = document.getElementById("countNewLineBefore");
-const countNewLineAfter = document.getElementById("countNewLineAfter");
-const countNewLineDiff = document.getElementById("countNewLineDiff");
-
-const countReturnBefore = document.getElementById("countReturnBefore");
-const countReturnAfter = document.getElementById("countReturnAfter");
-const countReturnDiff = document.getElementById("countReturnDiff");
-
-const countFullwidthLeftParenthesisBefore = document.getElementById("countFullwidthLeftParenthesisBefore");
-const countFullwidthLeftParenthesisAfter = document.getElementById("countFullwidthLeftParenthesisAfter");
-const countFullwidthLeftParenthesisDiff = document.getElementById("countFullwidthLeftParenthesisDiff");
-
-const countFullwidthRightParenthesisBefore = document.getElementById("countFullwidthRightParenthesisBefore");
-const countFullwidthRightParenthesisAfter = document.getElementById("countFullwidthRightParenthesisAfter");
-const countFullwidthRightParenthesisDiff = document.getElementById("countFullwidthRightParenthesisDiff");
-
-const countLeftParenthesisBefore = document.getElementById("countLeftParenthesisBefore");
-const countLeftParenthesisAfter = document.getElementById("countLeftParenthesisAfter");
-const countLeftParenthesisDiff = document.getElementById("countLeftParenthesisDiff");
-
-const countRightParenthesisBefore = document.getElementById("countRightParenthesisBefore");
-const countRightParenthesisAfter = document.getElementById("countRightParenthesisAfter");
-const countRightParenthesisDiff = document.getElementById("countRightParenthesisDiff");
-
-const countStartDivTagBefore = document.getElementById("countStartDivTagBefore");
-const countStartDivTagAfter = document.getElementById("countStartDivTagAfter");
-const countStartDivTagDiff = document.getElementById("countStartDivTagDiff");
-
-const countEndDivTagBefore = document.getElementById("countEndDivTagBefore");
-const countEndDivTagAfter = document.getElementById("countEndDivTagAfter");
-const countEndDivTagDiff = document.getElementById("countEndDivTagDiff");
-
+// // カウント結果を表示する要素
+// const countCharacterBefore = document.getElementById("countCharacterBefore");
+// const countCharacterAfter = document.getElementById("countCharacterAfter");
+// let countCharacterDiff = document.getElementById("countCharacterDiff");
 
 // ページ読み込み時に保存されたデータを取得して表示
 window.addEventListener("DOMContentLoaded", () => {
@@ -67,8 +28,11 @@ window.addEventListener("DOMContentLoaded", () => {
     ["(\\d+) +年", "$1年", true, true],
     ["(\\d{1,2}) +月", "$1月", true, true],
     ["(\\d{1,2}) +日", "$1日", true, true],
+    ["年 +(\\d{1,2})", "年$1", true, true],
+    ["月 +(\\d{1,2})", "月$1", true, true],
     ["(\\d{1,3}) +歳", "$1歳", true, true],
     ["(\\d{1,3}) +才", "$1才", true, true],
+    ["(\\d{1,2}) +日", "$1日", true, true],
     ["（", "(", false, true],
     ["）", ")", false, true],
     ["You tube", "YouTube", false, true],
@@ -189,12 +153,35 @@ fileInput.addEventListener("change", (event) => {
  * 指定した文字の出現回数をカウントする関数
  * @param {string} text - 対象の文字列
  * @param {string} target - カウントする文字
+ * @param {boolean} useRegex - target を正規表現として扱うかどうか
  * @returns {number} - 出現回数
  */
-function countOccurrences(text, target) {
-  const regex = new RegExp(target.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g');
+function countOccurrences(text, target, useRegex) {
+  if (!useRegex) {
+    target = target.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+  }
+  const regex = new RegExp(target, 'g');
   const matches = text.match(regex);
   return matches ? matches.length : 0;
+}
+
+function addCountElement(search, displayText, useRegex) {
+  const beforeText = originalTextElement.value;
+  const afterText = resultTextElement.value;
+  const beforeCount = countOccurrences(beforeText, search, useRegex);
+  const afterCount = countOccurrences(afterText, search, useRegex);
+  const diffCount = beforeCount - afterCount;
+
+  const counter = document.createElement("div");
+
+  counter.innerHTML = `
+    ${displayText ? displayText : search}
+    <span>${beforeCount}</span>→
+    <span>${afterCount}</span>
+    (<span>${diffCount}</span>)
+  `;
+
+  staticsElement.appendChild(counter);
 }
 
 /**
@@ -205,6 +192,18 @@ function updateCounts() {
   const beforeText = originalTextElement.value;
   const afterText = resultTextElement.value;
 
+  staticsElement.innerHTML = `
+    <div>文字数:
+        <span id="countCharacterBefore"></span>→
+        <span id="countCharacterAfter"></span>
+        (<span id="countCharacterDiff"></span>)
+    </div>
+  `
+
+  const countCharacterBefore = document.getElementById("countCharacterBefore");
+  const countCharacterAfter = document.getElementById("countCharacterAfter");
+  const countCharacterDiff = document.getElementById("countCharacterDiff");
+
   // 全体の文字数カウント
   const beforeCharacterCount = beforeText.length;
   const afterCharacterCount = afterText.length;
@@ -212,75 +211,22 @@ function updateCounts() {
   countCharacterAfter.textContent = afterCharacterCount;
   countCharacterDiff.textContent = afterCharacterCount - beforeCharacterCount;
 
-  // 半角クエスチョンマーク `?` のカウント
-  const beforeQuestionCount = countOccurrences(beforeText, "?");
-  const afterQuestionCount = countOccurrences(afterText, "?");
-  countQuestionBefore.textContent = beforeQuestionCount;
-  countQuestionAfter.textContent = afterQuestionCount;
-  countQuestionDiff.textContent = afterQuestionCount - beforeQuestionCount;
-
-  // 全角クエスチョンマーク `？` のカウント
-  const beforeFullWidthQuestionCount = countOccurrences(beforeText, "？");
-  const afterFullWidthQuestionCount = countOccurrences(afterText, "？");
-  countFullWidthQuestionBefore.textContent = beforeFullWidthQuestionCount;
-  countFullWidthQuestionAfter.textContent = afterFullWidthQuestionCount;
-  countFullWidthQuestionDiff.textContent = afterFullWidthQuestionCount - beforeFullWidthQuestionCount;
-
-  // 改行\nのカウント
-  const beforeNewLineCount = countOccurrences(beforeText, "\n");
-  const afterNewLineCount = countOccurrences(afterText, "\n");
-  countNewLineBefore.textContent = beforeNewLineCount;
-  countNewLineAfter.textContent = afterNewLineCount;
-  countNewLineDiff.textContent = afterNewLineCount - beforeNewLineCount;
-
-  // 改行\rのカウント
-  const beforeReturnCount = countOccurrences(beforeText, "\r");
-  const afterReturnCount = countOccurrences(afterText, "\r");
-  countReturnBefore.textContent = beforeReturnCount;
-  countReturnAfter.textContent = afterReturnCount;
-  countReturnDiff.textContent = afterReturnCount - beforeReturnCount;
-
-  // 全角丸括弧 `（` のカウント
-  const beforeFullwidthLeftParenthesisCount = countOccurrences(beforeText, "（");
-  const afterFullwidthLeftParenthesisCount = countOccurrences(afterText, "（");
-  countFullwidthLeftParenthesisBefore.textContent = beforeFullwidthLeftParenthesisCount;
-  countFullwidthLeftParenthesisAfter.textContent = afterFullwidthLeftParenthesisCount;
-  countFullwidthLeftParenthesisDiff.textContent = afterFullwidthLeftParenthesisCount - beforeFullwidthLeftParenthesisCount;
-
-  // 全角丸括弧 `）` のカウント
-  const beforeFullwidthRightParenthesisCount = countOccurrences(beforeText, "）");
-  const afterFullwidthRightParenthesisCount = countOccurrences(afterText, "）");
-  countFullwidthRightParenthesisBefore.textContent = beforeFullwidthRightParenthesisCount;
-  countFullwidthRightParenthesisAfter.textContent = afterFullwidthRightParenthesisCount;
-  countFullwidthRightParenthesisDiff.textContent = afterFullwidthRightParenthesisCount - beforeFullwidthRightParenthesisCount;
-
-  // 半角丸括弧 `(` のカウント
-  const beforeLeftParenthesisCount = countOccurrences(beforeText, "(");
-  const afterLeftParenthesisCount = countOccurrences(afterText, "(");
-  countLeftParenthesisBefore.textContent = beforeLeftParenthesisCount;
-  countLeftParenthesisAfter.textContent = afterLeftParenthesisCount;
-  countLeftParenthesisDiff.textContent = afterLeftParenthesisCount - beforeLeftParenthesisCount;
-
-  // 半角丸括弧 `)` のカウント
-  const beforeRightParenthesisCount = countOccurrences(beforeText, ")");
-  const afterRightParenthesisCount = countOccurrences(afterText, ")");
-  countRightParenthesisBefore.textContent = beforeRightParenthesisCount;
-  countRightParenthesisAfter.textContent = afterRightParenthesisCount;
-  countRightParenthesisDiff.textContent = afterRightParenthesisCount - beforeRightParenthesisCount;
-
-  // <div>のカウント
-  const beforeStartDivTagCount = countOccurrences(beforeText, "<div>");
-  const afterStartDivTagCount = countOccurrences(afterText, "<div>");
-  countStartDivTagBefore.textContent = beforeStartDivTagCount;
-  countStartDivTagAfter.textContent = afterStartDivTagCount;
-  countStartDivTagDiff.textContent = afterStartDivTagCount - beforeStartDivTagCount;
-
-  // </div>のカウント
-  const beforeEndDivTagCount = countOccurrences(beforeText, "</div>");
-  const afterEndDivTagCount = countOccurrences(afterText, "</div>");
-  countEndDivTagBefore.textContent = beforeEndDivTagCount;
-  countEndDivTagAfter.textContent = afterEndDivTagCount;
-  countEndDivTagDiff.textContent = afterEndDivTagCount - beforeEndDivTagCount;
+  addCountElement("?", "半角？");
+  addCountElement("？", "全角？");
+  addCountElement("\n", "改行\\n");
+  addCountElement("\r", "改行\\r");
+  addCountElement("（", "全角（");
+  addCountElement("）", "全角）");
+  addCountElement("(", "半角(");
+  addCountElement(")", "半角)");
+  addCountElement("<div>", "&lt;div&gt;");
+  addCountElement("</div>", "&lt;/div&gt;");
+  addCountElement("\\d+", "\\d+", true);
+  addCountElement("\\d+ +", "\\d+&nbsp;+", true);
+  addCountElement(" +\\d+", "&nbsp;+\\d+", true);
+  addCountElement("\\d+ +年", "\\d+ +年", true);
+  addCountElement("\\d+ +月", "\\d+ +月", true);
+  addCountElement("\\d+ +日", "\\d+ +日", true);
 }
 
 // 入力が変わるたびに置換を実行
