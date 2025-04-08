@@ -37,6 +37,8 @@ window.addEventListener("DOMContentLoaded", () => {
     ["）", ")", false, true],
     ["You tube", "YouTube", false, true],
     ["Youtube", "YouTube", false, true],
+    ["(\\d{1,4})-(\\d{1,2})-(\\d{1,2})", "$1年$2月$3日", true, false],
+    ["(\\d{1,4})/(\\d{1,2})/(\\d{1,2})", "$1年$2月$3日", true, false]
   ];
 
   replaces.forEach((replace) => {
@@ -82,6 +84,19 @@ removePairButton.addEventListener("click", () => {
         replaceContainer.removeChild(pairs[pairs.length - 1]);
     }
 });
+
+document.getElementById("toggleAllOn").addEventListener("click", () => {
+  document.querySelectorAll(".replaceToggle").forEach(checkbox => {
+    checkbox.checked = true;
+  });
+});
+
+document.getElementById("toggleAllOff").addEventListener("click", () => {
+  document.querySelectorAll(".replaceToggle").forEach(checkbox => {
+    checkbox.checked = false;
+  });
+});
+
 
 // 置換処理・置換前後の変化も反映。
 function performReplace() {
