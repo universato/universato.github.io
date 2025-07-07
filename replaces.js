@@ -38,7 +38,10 @@ window.addEventListener("DOMContentLoaded", () => {
     ["You tube", "YouTube", false, true],
     ["Youtube", "YouTube", false, true],
     ["(\\d{1,4})-(\\d{1,2})-(\\d{1,2})", "$1年$2月$3日", true, false],
-    ["(\\d{1,4})/(\\d{1,2})/(\\d{1,2})", "$1年$2月$3日", true, false]
+    ["(\\d{1,4})/(\\d{1,2})/(\\d{1,2})", "$1年$2月$3日", true, false],
+    ["年0(\\d)月", "年$1月", true, false],
+    ["月0(\\d)日", "月$1日", true, false],
+    ["\\* (.+)（(.+)）\\n", "|-\\n| $2 || $1\\n", true, false],
   ];
 
   replaces.forEach((replace) => {
