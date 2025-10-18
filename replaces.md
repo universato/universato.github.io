@@ -1,4 +1,4 @@
-# 置換のYAML形式対応
+# 置換のJSON形式対応
 
 ```html
 <div id="replaceContainer">
@@ -13,12 +13,25 @@
 
 `<div id="replaceContainer">`の中に複数の、置換の指示が入っています。
 
-これらを、YAML形式のinputタグ内に表示します。
+これらを、JSON形式のinputタグ内に表示します。
 
-また、YAML形式形式ののinputタグに変化があった場合には、それらを`<div id="replaceContainer">`に反映するようにします。
+また、JSON形式形式ののinputタグに変化があった場合には、それらを`<div id="replaceContainer">`に反映するようにします。
 
-YAML形式は、以下の通りとします。
+JSON形式は、以下の通りとします。
 
+```json
+{
+  "replacements": [
+    { "before": "foo", "after": "bar" },
+    { "before": "(\\d{4})-(\\d{2})-(\\d{2})", "after": "$1/$2/$3", "regex": true
+    },
+    { "before": "DEBUG:", "after": "", "enabled": false },
+  ]
+}
+```
+
+
+## 参考: YAML形式
 ```yaml
 replacements:
   - before: "foo"
