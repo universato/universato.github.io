@@ -1,124 +1,200 @@
 const replaceContainer = document.getElementById("replaceContainer");
-const addPairButton = document.getElementById("addPair");
-const removePairButton = document.getElementById("removePair");
 const originalTextElement = document.getElementById("originalText");
 const resultTextElement = document.getElementById("resultText");
+const jsonInput = document.getElementById("jsonInput");
 
 const staticsElement = document.getElementById("statics");
 
-// // カウント結果を表示する要素
-// const countCharacterBefore = document.getElementById("countCharacterBefore");
-// const countCharacterAfter = document.getElementById("countCharacterAfter");
-// let countCharacterDiff = document.getElementById("countCharacterDiff");
+// デフォルトの置換ルール
+const defaultReplacements = {
+  "replacements": [
+    { "before": "\\n", "after": "", "regex": true, "enabled": true },
+    { "before": "\\?", "after": "?\\n", "regex": true, "enabled": true },
+    { "before": "？", "after": "？\\n", "regex": true, "enabled": true },
+    { "before": "(\\d+)\\n", "after": "$1,", "regex": true, "enabled": true },
+    { "before": "</?div>", "after": "<br>", "regex": true, "enabled": true },
+    { "before": "(<br>)+", "after": "<br>", "regex": true, "enabled": true },
+    { "before": "(\\d+) +年", "after": "$1年", "regex": true, "enabled": true },
+    { "before": "(\\d{1,2}) +月", "after": "$1月", "regex": true, "enabled": true },
+    { "before": "(\\d{1,2}) +日", "after": "$1日", "regex": true, "enabled": true },
+    { "before": "年 +(\\d{1,2})", "after": "年$1", "regex": true, "enabled": true },
+    { "before": "月 +(\\d{1,2})", "after": "月$1", "regex": true, "enabled": true },
+    { "before": "(\\d{1,3}) +歳", "after": "$1歳", "regex": true, "enabled": true },
+    { "before": "(\\d{1,3}) +才", "after": "$1才", "regex": true, "enabled": true },
+    { "before": "(\\d{1,2}) +日", "after": "$1日", "regex": true, "enabled": true },
+    { "before": "（", "after": "(", "regex": false, "enabled": true },
+    { "before": "）", "after": ")", "regex": false, "enabled": true },
+    { "before": "You tube", "after": "YouTube", "regex": false, "enabled": true },
+    { "before": "Youtube", "after": "YouTube", "regex": false, "enabled": true },
+    { "before": "(\\d{1,4})-(\\d{1,2})-(\\d{1,2})", "after": "$1年$2月$3日", "regex": true, "enabled": false },
+    { "before": "(\\d{1,4})/(\\d{1,2})/(\\d{1,2})", "after": "$1年$2月$3日", "regex": true, "enabled": false },
+    { "before": "年0(\\d)月", "after": "年$1月", "regex": true, "enabled": false },
+    { "before": "月0(\\d)日", "after": "月$1日", "regex": true, "enabled": false },
+    { "before": "\\* (.+)（(.+)）\\n", "after": "|-\\n| $2 || $1\\n", "regex": true, "enabled": false },
+  ]
+};
 
 // ページ読み込み時に保存されたデータを取得して表示
 window.addEventListener("DOMContentLoaded", () => {
+  console.log("DOMContentLoaded: イベント発火");
   const savedText = localStorage.getItem("originalText");
   if (savedText !== null) {
       originalTextElement.value = savedText;
+      console.log("DOMContentLoaded: originalTextをロードしました");
   }
 
-  const replaces = [
-    ["\\n", "", true, true],
-    ["\\?", "?\\n", true, true],
-    ["？", "？\\n", true, true],
-    ["(\\d+)\\n", "$1,", true, true],
-    ["</?div>", "<br>", true, true],
-    ["(<br>)+", "<br>", true, true],
-    ["(\\d+) +年", "$1年", true, true],
-    ["(\\d{1,2}) +月", "$1月", true, true],
-    ["(\\d{1,2}) +日", "$1日", true, true],
-    ["年 +(\\d{1,2})", "年$1", true, true],
-    ["月 +(\\d{1,2})", "月$1", true, true],
-    ["(\\d{1,3}) +歳", "$1歳", true, true],
-    ["(\\d{1,3}) +才", "$1才", true, true],
-    ["(\\d{1,2}) +日", "$1日", true, true],
-    ["（", "(", false, true],
-    ["）", ")", false, true],
-    ["You tube", "YouTube", false, true],
-    ["Youtube", "YouTube", false, true],
-    ["(\\d{1,4})-(\\d{1,2})-(\\d{1,2})", "$1年$2月$3日", true, false],
-    ["(\\d{1,4})/(\\d{1,2})/(\\d{1,2})", "$1年$2月$3日", true, false],
-    ["年0(\\d)月", "年$1月", true, false],
-    ["月0(\\d)日", "月$1日", true, false],
-    ["\\* (.+)（(.+)）\\n", "|-\\n| $2 || $1\\n", true, false],
-  ];
+  const savedJson = localStorage.getItem("replacementsJson");
+  if (savedJson !== null) {
+      jsonInput.value = savedJson;
+      console.log("DOMContentLoaded: replacementsJsonをロードしました");
+  } else {
+      jsonInput.value = JSON.stringify(defaultReplacements, null, 2);
+      console.log("DOMContentLoaded: defaultReplacementsをセットしました");
+  }
+  renderReplacePairsFromJson();
+  performReplace();
+  document.body.classList.add("loaded"); // ページを表示
+  console.log("DOMContentLoaded: 初期化処理完了");
+});
 
-  replaces.forEach((replace) => {
-    const [beforeText, afterText, isCheckedRegex] = replace;
+// JSONから置換ペアをレンダリングする関数
+function renderReplacePairsFromJson() {
+  console.log("renderReplacePairsFromJson: 開始");
+  replaceContainer.innerHTML = ""; // 既存のペアをクリア
+  let replacementsData = { "replacements": [] };
+  try {
+    replacementsData = JSON.parse(jsonInput.value);
+    localStorage.setItem("replacementsJson", jsonInput.value);
+    console.log("renderReplacePairsFromJson: JSONをパースしました", replacementsData);
+  } catch (e) {
+    console.error("JSONパースエラー:", e);
+    replaceContainer.innerHTML = `<div style="color: red;">JSONの形式が正しくありません。</div>`;
+    console.log("renderReplacePairsFromJson: JSONパースエラーメッセージを表示");
+    return;
+  }
 
+  if (!replacementsData.replacements || !Array.isArray(replacementsData.replacements)) {
+    replaceContainer.innerHTML = `<div style="color: red;">JSONには 'replacements' 配列が必要です。</div>`;
+    console.log("renderReplacePairsFromJson: 'replacements' 配列エラーメッセージを表示");
+    return;
+  }
+
+  console.log("renderReplacePairsFromJson: replaceContainer.innerHTMLをクリア");
+  replacementsData.replacements.forEach((replace) => {
     const pair = document.createElement("div");
     pair.classList.add("replace-pair");
+
+    const beforeText = replace.before !== undefined ? replace.before : "";
+    const afterText = replace.after !== undefined ? replace.after : "";
+    const isRegex = replace.regex === true;
+    const isEnabled = replace.enabled !== false; // デフォルトはtrue
 
     pair.innerHTML = `
       <label></label><input type="text" class="searchText" value="${beforeText}">
       →
       <label></label><input type="text" class="replaceText" value="${afterText}">
-      <label class="inline"><input type="checkbox" class="regexToggle" ${isCheckedRegex ? "checked" : ""}>正規表現を使用</label>
-      <label class="inline"><input type="checkbox" class="replaceToggle" checked>置換実行</label>`;
+      <label class="inline"><input type="checkbox" class="regexToggle" ${isRegex ? "checked" : ""}>正規表現を使用</label>
+      <label class="inline"><input type="checkbox" class="replaceToggle" ${isEnabled ? "checked" : ""}>置換実行</label>
+    `;
     replaceContainer.appendChild(pair);
-  })
+  });
+  console.log("renderReplacePairsFromJson: 置換ペアをレンダリングしました");
+  performReplace(); // UIが更新されたら置換を再実行
+  console.log("renderReplacePairsFromJson: 終了");
+}
 
-  document.body.classList.add("loaded");
+// 置換ペアUIからJSONを更新する関数
+function updateJsonInputFromPairs() {
+  const replacements = [];
+  document.querySelectorAll(".replace-pair").forEach(pair => {
+    const before = pair.querySelector(".searchText").value;
+    const after = pair.querySelector(".replaceText").value;
+    const regex = pair.querySelector(".regexToggle").checked;
+    const enabled = pair.querySelector(".replaceToggle").checked;
 
-  performReplace()
-});
+    const replacement = { before, after };
+    if (regex) replacement.regex = true;
+    if (!enabled) replacement.enabled = false;
+    replacements.push(replacement);
+  });
+  jsonInput.value = JSON.stringify({ replacements }, null, 2);
+  localStorage.setItem("replacementsJson", jsonInput.value);
+  performReplace(); // JSONが更新されたら置換を再実行
+}
+
+// JSON入力が変更されたらUIを更新
+jsonInput.addEventListener("input", renderReplacePairsFromJson);
+
+// 置換ペアUIが変更されたらJSONを更新
+replaceContainer.addEventListener("input", updateJsonInputFromPairs);
 
 // 動的に検索・置換ペアを追加
-addPairButton.addEventListener("click", () => {
-    const pair = document.createElement("div");
-    pair.classList.add("replace-pair");
-
-    pair.innerHTML = `
-        <label></label><input type="text" class="searchText" value="">
-        →
-        <label></label><input type="text" class="replaceText" value="">
-        <label class="inline"><input type="checkbox" class="regexToggle">正規表現を使用</label>
-        <label class="inline"><input type="checkbox" class="replaceToggle" checked>置換実行</label>
-    `;
-
-    replaceContainer.appendChild(pair);
+document.getElementById("addPair").addEventListener("click", () => {
+    const replacementsData = JSON.parse(jsonInput.value);
+    replacementsData.replacements.push({ "before": "", "after": "", "regex": false, "enabled": true });
+    jsonInput.value = JSON.stringify(replacementsData, null, 2);
+    renderReplacePairsFromJson();
 });
 
 // 動的に検索・置換ペアを削除(最低1ペアは残す)
-removePairButton.addEventListener("click", () => {
-    const pairs = document.querySelectorAll(".replace-pair");
-    if (pairs.length > 1) {
-        replaceContainer.removeChild(pairs[pairs.length - 1]);
+document.getElementById("removePair").addEventListener("click", () => {
+    let replacementsData = JSON.parse(jsonInput.value);
+    if (replacementsData.replacements.length > 1) {
+        replacementsData.replacements.pop();
+        jsonInput.value = JSON.stringify(replacementsData, null, 2);
+        renderReplacePairsFromJson();
     }
 });
 
 document.getElementById("toggleAllOn").addEventListener("click", () => {
-  document.querySelectorAll(".replaceToggle").forEach(checkbox => {
-    checkbox.checked = true;
-  });
+  let replacementsData = JSON.parse(jsonInput.value);
+  replacementsData.replacements.forEach(r => r.enabled = true);
+  jsonInput.value = JSON.stringify(replacementsData, null, 2);
+  renderReplacePairsFromJson();
 });
 
 document.getElementById("toggleAllOff").addEventListener("click", () => {
-  document.querySelectorAll(".replaceToggle").forEach(checkbox => {
-    checkbox.checked = false;
-  });
+  let replacementsData = JSON.parse(jsonInput.value);
+  replacementsData.replacements.forEach(r => r.enabled = false);
+  jsonInput.value = JSON.stringify(replacementsData, null, 2);
+  renderReplacePairsFromJson();
 });
+
 
 
 // 置換処理・置換前後の変化も反映。
 function performReplace() {
+    console.log("performReplace: 開始");
     const originalText = originalTextElement.value;
-    const searchInputs = document.querySelectorAll(".searchText");
-    const replaceInputs = document.querySelectorAll(".replaceText");
-    const regexToggles = document.querySelectorAll(".regexToggle");
-    const replaceToggles = document.querySelectorAll(".replaceToggle");
-
     localStorage.setItem("originalText", originalText);
+    console.log("performReplace: originalTextをlocalStorageに保存");
+
+    let replacementsData = { "replacements": [] };
+    try {
+      replacementsData = JSON.parse(jsonInput.value);
+      console.log("performReplace: JSONをパースしました", replacementsData);
+    } catch (e) {
+      console.error("JSONパースエラー (performReplace):", e);
+      resultTextElement.value = "JSONの形式が正しくありません。";
+      console.log("performReplace: JSONパースエラーメッセージを表示");
+      return;
+    }
+
+    if (!replacementsData.replacements || !Array.isArray(replacementsData.replacements)) {
+      resultTextElement.value = "JSONには 'replacements' 配列が必要です。";
+      console.log("performReplace: 'replacements' 配列エラーメッセージを表示");
+      return;
+    }
 
     let result = originalText;
-    searchInputs.forEach((searchInput, index) => {
-        const searchText = searchInput.value;
-        let replaceText = replaceInputs[index].value;
-        const useRegex = regexToggles[index].checked;
-        const replace = replaceToggles[index].checked;
+    replacementsData.replacements.forEach((replace) => {
+        const searchText = replace.before;
+        let replaceText = replace.after;
+        const useRegex = replace.regex === true;
+        const enabled = replace.enabled !== false;
 
-        if(!replace){
+        if(!enabled){
+          console.log(`performReplace: 置換をスキップ (before: ${searchText})`);
           return; // スキップ
         }
 
@@ -130,6 +206,7 @@ function performReplace() {
                 if (useRegex) {
                     const regex = new RegExp(searchText, "g"); // 正規表現モード
                     result = result.replace(regex, replaceText);
+                    console.log(`performReplace: 正規表現置換実行 (before: ${searchText}, after: ${replaceText})`);
                 } else {
                     const escapedSearchText = searchText.replace(
                         /[-/\\^$*+?.()|[\]{}]/g,
@@ -137,16 +214,20 @@ function performReplace() {
                     ); // エスケープ
                     const regex = new RegExp(escapedSearchText, "g");
                     result = result.replace(regex, replaceText);
+                    console.log(`performReplace: リテラル置換実行 (before: ${searchText}, after: ${replaceText})`);
                 }
             }
         } catch (error) {
             resultTextElement.value = "正規表現の構文エラーがあります。確認してください。";
+            console.error("performReplace: 正規表現構文エラー:", error);
         }
     });
 
     resultTextElement.value = result;
+    console.log("performReplace: 結果テキストを更新");
 
     updateCounts()
+    console.log("performReplace: 終了");
 }
 
 // ファイル選択時の処理
