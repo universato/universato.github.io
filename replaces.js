@@ -43,7 +43,8 @@ window.addEventListener("DOMContentLoaded", () => {
       console.log("DOMContentLoaded: originalTextをロードしました");
   }
 
-  const savedJson = localStorage.getItem("replacementsJson");
+  let savedJson = localStorage.getItem("replacementsJson");
+  savedJson = null;
   if (savedJson !== null) {
       jsonInput.value = savedJson;
       console.log("DOMContentLoaded: replacementsJsonをロードしました");

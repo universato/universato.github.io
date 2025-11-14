@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>最大心拍数計算</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 30px;
+    }
+    label, input {
+      font-size: 16px;
+      margin: 5px 0;
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      color: darkblue;
+    }
+  </style>
+</head>
+<body>
+  <h1>最大心拍数計算</h1>
+
+  <label for="birthday">誕生日：</label><br>
+  <input type="date" id="birthday"><br>
+
+  <div id="result"></div>
+
+  <script>
+    const birthdayInput = document.getElementById('birthday');
+    const resultDiv = document.getElementById('result');
+
+    // ページ読み込み時にlocalStorageをチェック
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedBirthday = localStorage.getItem('birthday');
+      if (savedBirthday) {
+        birthdayInput.value = savedBirthday;
+        calculateMaxHR(savedBirthday);
+      }
+    });
+
+    // 誕生日を入力したら自動計算
+    birthdayInput.addEventListener('input', () => {
+      const birthdayStr = birthdayInput.value;
+      if (birthdayStr) {
+        localStorage.setItem('birthday', birthdayStr);
+        calculateMaxHR(birthdayStr);
+      } else {
+        resultDiv.textContent = '';
+      }
+    });
+
+    function calculateMaxHR(birthdayStr) {
+      const today = new Date();
+      const birthDate = new Date(birthdayStr);
+
+      if (birthDate.toString() === 'Invalid Date') {
+        resultDiv.textContent = '正しい日付を入力してください。';
+        return;
+      }
+
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const thisYearBirthday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
+      if (today < thisYearBirthday) {
+        age--;
+      }
+
+      const TanakaMHR = 208 - (0.7 * age);
+      const ConventionalMHR = 220 - age;
+
+      resultText = `年齢は ${age} 歳。<br>`;
+      resultText += `田中式による推定最大心拍数: ${TanakaMHR.toFixed(1)} bpm (= 208 - (0.7 * 年齢))<br>`;
+      resultText += `古典的な推定最大心拍数: ${ConventionalMHR.toFixed(1)} bpm (= 220 - 年齢)`
+
+      resultDiv.innerHTML = resultText;
+    }
+  </script>
+</body>
+</html>
