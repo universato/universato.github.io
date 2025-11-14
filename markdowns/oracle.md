@@ -1,0 +1,7 @@
+
+
+```sql
+CREATE TABLE EMPLOYEES_COPIED AS SELECT * FROM EMPLOYEES;
+
+create table 
+```
