@@ -86,12 +86,14 @@ document.getElementById("toggleAllOn").addEventListener("click", () => {
   document.querySelectorAll(".replaceToggle").forEach(checkbox => {
     checkbox.checked = true;
   });
+  performReplace();
 });
 
 document.getElementById("toggleAllOff").addEventListener("click", () => {
   document.querySelectorAll(".replaceToggle").forEach(checkbox => {
     checkbox.checked = false;
   });
+  performReplace();
 });
 
 
