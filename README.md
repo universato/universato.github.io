@@ -29,3 +29,9 @@ Macのコンソールで開く方法
 open index.html
 open replaces.html
 ```
+
+GitHubのレポジトリを開く方法
+(※ ghコマンドを入れておく必要あり。)
+```html
+gh repo view --web 
+```
