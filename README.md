@@ -33,5 +33,6 @@ open replaces.html
 GitHubのレポジトリを開く方法
 (※ ghコマンドを入れておく必要あり。)
 ```html
-gh repo view --web 
+gh browse
+gh repo view --web
 ```
