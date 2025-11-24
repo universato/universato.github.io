@@ -98,6 +98,14 @@ gh browse
 gh repo view --web
 ```
 
+### git rebase
+
+>GitLens: Enable Interactive Rebase Editor
+
+VSCodeで、GitLensの拡張を入れて、インタラクティブrebaseエディターを有効にして使うようにすると便利かもしれない。
+
+vimだと、dwで消してる。
+
 ### 未追跡ファイルを削除する
 
 ```sh
