@@ -49,8 +49,9 @@ window.addEventListener("DOMContentLoaded", () => {
       →
       <label></label><input type="text" class="replaceText" value="${afterText}">
       <label class="inline"><input type="checkbox" class="regexToggle" ${isCheckedRegex ? "checked" : ""}>正規表現を使用</label>
-      <label class="inline"><input type="checkbox" class="replaceToggle" checked>置換実行</label>`;
+      <label class="inline"><input type="checkbox" class="replaceToggle" ${replace[3] ? "checked" : ""}>置換実行</label>`;
     replaceContainer.appendChild(pair);
+    toggleReplacePairState(pair.querySelector(".replaceToggle"));
   })
 
   document.body.classList.add("loaded");
@@ -58,20 +59,36 @@ window.addEventListener("DOMContentLoaded", () => {
   performReplace()
 });
 
-// 動的に検索・置換ペアを追加
-addPairButton.addEventListener("click", () => {
-    const pair = document.createElement("div");
-    pair.classList.add("replace-pair");
+ // Helper function to toggle the disabled state of a replace pair
+ function toggleReplacePairState(replaceToggleCheckbox) {
+   const pair = replaceToggleCheckbox.closest(".replace-pair");
+   if (replaceToggleCheckbox.checked) {
+     pair.classList.remove("disabled");
+   } else {
+     pair.classList.add("disabled");
+   }
+ }
 
-    pair.innerHTML = `
-        <label></label><input type="text" class="searchText" value="">
-        →
-        <label></label><input type="text" class="replaceText" value="">
-        <label class="inline"><input type="checkbox" class="regexToggle">正規表現を使用</label>
-        <label class="inline"><input type="checkbox" class="replaceToggle" checked>置換実行</label>
-    `;
+ // 動的に検索・置換ペアを追加
+ addPairButton.addEventListener("click", () => {
+     const pair = document.createElement("div");
+     pair.classList.add("replace-pair");
 
-    replaceContainer.appendChild(pair);
+     pair.innerHTML = `
+         <label></label><input type="text" class="searchText" value="">
+         →
+         <label></label><input type="text" class="replaceText" value="">
+         <label class="inline"><input type="checkbox" class="regexToggle">正規表現を使用</label>
+         <label class="inline"><input type="checkbox" class="replaceToggle" checked>置換実行</label>
+     `;
+
+     replaceContainer.appendChild(pair);
+     const newReplaceToggle = pair.querySelector(".replaceToggle");
+     newReplaceToggle.addEventListener("change", () => {
+       toggleReplacePairState(newReplaceToggle);
+       performReplace();
+     });
+     toggleReplacePairState(newReplaceToggle); // Set initial state
 });
 
 // 動的に検索・置換ペアを削除(最低1ペアは残す)
@@ -85,14 +102,16 @@ removePairButton.addEventListener("click", () => {
 document.getElementById("toggleAllOn").addEventListener("click", () => {
   document.querySelectorAll(".replaceToggle").forEach(checkbox => {
     checkbox.checked = true;
+    toggleReplacePairState(checkbox);
   });
   performReplace();
 });
 
-document.getElementById("toggleAllOff").addEventListener("click", () => {
-  document.querySelectorAll(".replaceToggle").forEach(checkbox => {
-    checkbox.checked = false;
-  });
+ document.getElementById("toggleAllOff").addEventListener("click", () => {
+   document.querySelectorAll(".replaceToggle").forEach(checkbox => {
+     checkbox.checked = false;
+     toggleReplacePairState(checkbox);
+   });
   performReplace();
 });
 
@@ -245,4 +264,9 @@ function updateCounts() {
 
 // 入力が変わるたびに置換を実行
 originalTextElement.addEventListener("input", performReplace);
-replaceContainer.addEventListener("input", performReplace);
+replaceContainer.addEventListener("input", (event) => {
+  if (event.target.classList.contains("replaceToggle")) {
+    toggleReplacePairState(event.target);
+  }
+  performReplace();
+});
