@@ -25,7 +25,16 @@ echo "今日は $(date) です"
 
 「シェルは、変数となりうるものは、常にダブルクォートで囲め!!」
 
+# 条件分岐: 数値
 
+| 条件 | 意味                  |
+| --- | ---                   |
+| -eq | equal                 |
+| -ne | not equal             |
+| -gt | greater than          |
+| -ge | greater than or equal |
+| -lt | less than             |
+| -le | less than or equal    |
 
 # 条件分岐: ファイルテスト・文字列テスト
 

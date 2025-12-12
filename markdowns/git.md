@@ -142,6 +142,17 @@ git diff --diff-filter=ACMRT
 *   `.gitattributes`: ファイルの属性(例: テキストファイルの改行コード、マージ戦略など)を定義します。
 *   `~/.gitconfig`: グローバルなGit設定ファイル。ユーザー名、メールアドレス、エイリアスなどを設定します。
 
+### gitconfig
+
+```ini
+[url "https://"]
+    insteadOf = git://
+```
+
+暗号化されていない「git://」の代わりに、暗号化されている「https://」を用いる。
+
+古い設定との互換性確保。
+
 ### リンク集
 
 *   [GIGAZINE: 混乱を引き起こしがちなGitの用語まとめ](https://gigazine.net/news/20231111-confusing-git-terminology/)

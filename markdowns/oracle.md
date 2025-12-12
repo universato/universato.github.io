@@ -1,7 +1,6 @@
 
-
+テーブルの複製。
 ```sql
 CREATE TABLE EMPLOYEES_COPIED AS SELECT * FROM EMPLOYEES;
-
-create table 
+create table EMPLOYEES_COPIED as select * from EMPLOYEES;
 ```
