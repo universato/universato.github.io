@@ -23,12 +23,21 @@
   "files.exclude": {
     "**/unused-folder": true,
     "**/legacy-data": true,
-    "**/rarely-used": true
+    "**/rarely-used": true,
+    "202[0-5]*": true
   }
 }
 ```
 ただ、存在を忘れると、地獄そう。「どうして非表示のファイルがあるんだ!!??」ってなってしまいそう……。
 
+`*` によるワイルドカード文字の設定や、正規表現の範囲指定のようなこともできる。
+
+## Terminal
+
+Terminal > integrated > Default Profile: Windows
+
+Windowsで、Terminalの初期設定をPowershellからGit Bashに変更したりするときに使用する
+(Git for Winwdows を使う前提)
 
 ## 拡張機能
 
